@@ -1,0 +1,10 @@
+.*.sw*
+*.log
+*.pyc
+.*
+
+# Ignore protobuf generated files
+*_pb2.py
+
+!.gitignore
+
