@@ -1,0 +1,54 @@
+package cheese;
+
+enum Status {
+	OK = 0;
+	ERROR = 1;
+}
+
+
+message RegisterClientRequest {
+	required int32 ncpus = 1;
+}
+
+message JobRequest {
+}
+
+message JobCompleteRequest {
+	required string cmdline = 1;
+	required int32 ret = 2;
+	required string stdout = 3;
+	required string stderr = 4;
+}
+
+message Request {
+	required RequestType type = 1;
+
+	optional RegisterClientRequest registerClientRequest = 2;
+	optional JobRequest jobRequest = 3;
+	optional JobCompleteRequest jobCompleteRequest = 4;
+
+
+	enum RequestType {
+		REGISTER_CLIENT_REQUEST = 0;
+		JOB_REQUEST = 1;
+		JOB_COMPLETE_REQUEST = 2;
+	}
+}
+
+message JobResponse {
+	optional string cmdline = 1;
+}
+
+message Response {
+	required ResponseType type = 1;
+	required Status status = 2;
+	optional string error = 3;
+
+	optional JobResponse jobResponse = 4;
+
+	enum ResponseType {
+		GENERIC = 0;
+		JOB_RESPONSE = 1;
+	}
+}
+
