@@ -68,7 +68,6 @@ def issue_job_request(socket):
 	# Make a request for a new job to run
 	request = protocol_pb2.Request()
 	request.type = protocol_pb2.Request.JOB_REQUEST
-	request.jobRequest.type = protocol_pb2.JobRequest.JOB_REQUEST
 	send_request(socket, request)
 
 

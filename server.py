@@ -54,7 +54,7 @@ def	handle_job_request(sock, client, request, response):
 		if Container.JOBS.empty():
 			logger.info("NO JOBS")
 			response.type = protocol_pb2.Response.GENERIC
-			IDLE_CLIENTS.append(client)
+			Container.IDLE_CLIENTS.append(client)
 		else:
 			response.type = protocol_pb2.Response.JOB_RESPONSE
 			job = Container.JOBS.get()
