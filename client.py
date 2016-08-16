@@ -29,7 +29,7 @@ def setup_parser():
 
 	parser.add_argument('--host', '-H', type=str, required=True,
 			help='Host to connect to')
-	parser.add_argument('--port', '-p', type=int, default=41938,
+	parser.add_argument('--port', '-p', type=int, default=15225,
 			help='Port on which host is running server')
 	parser.add_argument('--ncpus', '-j', type=int, default=multiprocessing.cpu_count(),
 			help='Number of jobs to run in parallel')
