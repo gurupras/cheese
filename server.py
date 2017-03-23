@@ -24,6 +24,7 @@ class Client(object):
 
 
 class Container(object):
+	LOCK = threading.Lock()
 	FINISHED = 0
 	NJOBS = 0
 	JOBS = Queue.Queue()
@@ -77,8 +78,10 @@ def handle_job_complete_request(sock, client, request, response):
 		}
 		logger.error(json.dumps(d, indent=2))
 
+	Container.LOCK.acquire()
 	Container.FINISHED += 1
 	logger.info("Finished: %d/%d (%d%%)" % (Container.FINISHED, Container.NJOBS, (Container.FINISHED * 100) / Container.NJOBS))
+	Container.LOCK.release()
 	client.jobs.remove(request.cmdline)
 
 def handle(client):
