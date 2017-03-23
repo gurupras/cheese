@@ -39,7 +39,7 @@ def run_cmdline(cmdline, queue, signal_fix):
 		ret, stdout, stderr = pycommons.run(cmdline)
 		queue.put((cmdline, ret, stdout, stderr))
 	except Exception, e:
-		queue.put((cmdline, None, None, e))
+		queue.put((cmdline, None, None, str(e)))
 
 
 def callback(self):
@@ -58,20 +58,24 @@ def main(argv):
 	global sem
 	sem = Semaphore(args.ncpus)
 
+	job_dict = {}
 	def run_jobs():
 		while True:
 			j = beanstalk.reserve()
-			print j.body
 			sem.acquire()
 			pool.apply_async(func=run_cmdline, args=(j.body, queue, True), callback=callback)
+			job_dict[j.body] = j
 			#run_cmdline(j.body, queue, True)
 
 	def process_queue():
 		while True:
 			cmdline, ret, stdout, stderr = queue.get()
-			if stderr != None and stderr != '':
+			if stderr != None and stderr.strip() != '':
 				print '{} failed: {}'.format(cmdline, stderr)
-	
+				job_dict[cmdline].bury()
+			else:
+				job_dict[cmdline].delete()
+
 	jobs_t = threading.Thread(target=run_jobs)
 	queue_t = threading.Thread(target=process_queue)
 

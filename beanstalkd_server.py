@@ -27,7 +27,7 @@ def main(argv):
 	parser = setup_parser()
 	args = parser.parse_args(argv[1:])
 
-	cmdline = shlex.split('/usr/local/bin/beanstalkd -p {}'.format(args.port))
+	cmdline = shlex.split('/usr/local/bin/beanstalkd -p {} -V'.format(args.port))
 	p = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 	t = threading.Thread(target=process_subprocess_stdout, args=(p,))
 	t.start()
