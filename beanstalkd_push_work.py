@@ -22,7 +22,7 @@ def process(jobsfile, host, port, *args, **kwargs):
 	with pycommons.open_file(jobsfile, 'rb') as f:
 		for line in f:
 			data = line.strip()
-			beanstalk.put(data, ttr=4*60*60)
+			beanstalk.put(data, ttr=24*60*60)
 
 
 

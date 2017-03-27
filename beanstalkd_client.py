@@ -43,6 +43,7 @@ def run_cmdline(cmdline, queue, signal_fix):
 
 
 def callback(self):
+	print 'Releasing semaphore'
 	sem.release()
 
 
@@ -61,20 +62,26 @@ def main(argv):
 	job_dict = {}
 	def run_jobs():
 		while True:
-			j = beanstalk.reserve()
 			sem.acquire()
+			j = beanstalk.reserve()
 			pool.apply_async(func=run_cmdline, args=(j.body, queue, True), callback=callback)
 			job_dict[j.body] = j
 			#run_cmdline(j.body, queue, True)
 
+
 	def process_queue():
 		while True:
 			cmdline, ret, stdout, stderr = queue.get()
+			time.sleep(0.3)
+			job = job_dict[cmdline]
 			if stderr != None and stderr.strip() != '':
 				print '{} failed: {}'.format(cmdline, stderr)
-				job_dict[cmdline].bury()
+				job.bury()
 			else:
-				job_dict[cmdline].delete()
+				try:
+					job.delete()
+				except Exception, e:
+					print 'Failed: {}'.format(e)
 
 	jobs_t = threading.Thread(target=run_jobs)
 	queue_t = threading.Thread(target=process_queue)
